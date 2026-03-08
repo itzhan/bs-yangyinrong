@@ -1,0 +1,63 @@
+// ==============================
+// 火锅店 - 暖红国潮风格
+// ==============================
+:root {
+  --primary: #c0392b;
+  --primary-light: #e74c3c;
+  --primary-dark: #922b21;
+  --gold: #d4a017;
+  --gold-light: #f1c40f;
+  --bg-dark: #1a1a2e;
+  --bg-warm: #fdf6f0;
+  --text-dark: #2c3e50;
+  --text-light: #7f8c8d;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'PingFang SC', 'Microsoft YaHei', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: var(--text-dark);
+  background: var(--bg-warm);
+}
+
+a { text-decoration: none; color: inherit; }
+
+.section {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 60px 20px;
+}
+
+.section-title {
+  text-align: center;
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--primary-dark);
+  margin-bottom: 12px;
+  position: relative;
+  &::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary), var(--gold));
+    margin: 12px auto 0;
+    border-radius: 2px;
+  }
+}
+
+.section-subtitle {
+  text-align: center;
+  color: var(--text-light);
+  font-size: 16px;
+  margin-bottom: 40px;
+}
+
+// Element Plus 主题覆盖
+.el-button--primary {
+  --el-button-bg-color: var(--primary) !important;
+  --el-button-border-color: var(--primary) !important;
+  --el-button-hover-bg-color: var(--primary-light) !important;
+  --el-button-hover-border-color: var(--primary-light) !important;
+}
