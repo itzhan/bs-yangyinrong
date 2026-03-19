@@ -8,7 +8,7 @@ export const businessRoutes: AppRouteRecord = {
   meta: {
     title: '业务管理',
     icon: 'ri:restaurant-line',
-    roles: ['ROLE_ADMIN', 'ROLE_CASHIER', 'ROLE_KITCHEN', 'ROLE_INVENTORY']
+    roles: ['ROLE_ADMIN', 'ROLE_CASHIER']
   },
   children: [
     {
@@ -57,7 +57,7 @@ export const businessRoutes: AppRouteRecord = {
       path: 'ingredients',
       name: 'IngredientManage',
       component: '/business/ingredient',
-      meta: { title: '库存管理', icon: 'ri:stock-line', roles: ['ROLE_ADMIN', 'ROLE_INVENTORY'] }
+      meta: { title: '库存管理', icon: 'ri:stock-line', roles: ['ROLE_ADMIN'] }
     },
     {
       path: 'employees',

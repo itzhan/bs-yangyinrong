@@ -8,7 +8,7 @@ export const dashboardRoutes: AppRouteRecord = {
   meta: {
     title: '数据面板',
     icon: 'ri:pie-chart-line',
-    roles: ['ROLE_ADMIN', 'ROLE_CASHIER', 'ROLE_KITCHEN', 'ROLE_INVENTORY']
+    roles: ['ROLE_ADMIN', 'ROLE_CASHIER']
   },
   children: [
     {

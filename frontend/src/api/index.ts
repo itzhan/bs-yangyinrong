@@ -13,6 +13,10 @@ export const getDishDetail = (id: number) => request.get(`/api/public/dishes/${i
 /** 获取可预订的桌台 */
 export const getAvailableTables = () => request.get('/api/public/tables')
 
+/** 查询桌台可用性（按容量分组） */
+export const getTableAvailability = (params: { date: string; timeSlot: string }) =>
+  request.get('/api/public/tables/availability', { params })
+
 /** 提交预订 */
 export const submitReservation = (data: any) => request.post('/api/public/reservations', data)
 

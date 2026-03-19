@@ -103,7 +103,7 @@
     formKey.value++
   })
 
-  type AccountKey = 'admin' | 'cashier' | 'kitchen' | 'inventory'
+  type AccountKey = 'admin' | 'cashier'
 
   export interface Account {
     key: AccountKey
@@ -127,20 +127,6 @@
       userName: 'cashier1',
       password: '123456',
       roles: ['ROLE_CASHIER']
-    },
-    {
-      key: 'kitchen',
-      label: '后厨',
-      userName: 'kitchen1',
-      password: '123456',
-      roles: ['ROLE_KITCHEN']
-    },
-    {
-      key: 'inventory',
-      label: '库管员',
-      userName: 'inventory1',
-      password: '123456',
-      roles: ['ROLE_INVENTORY']
     }
   ])
 

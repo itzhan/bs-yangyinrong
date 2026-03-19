@@ -163,19 +163,15 @@ public class MemberPortalController {
         if (member == null) throw new BusinessException(404, "会员不存在");
 
         String memberPhone = normalizePhone(member.getPhone());
-        String memberName = safeTrim(member.getName());
+
+        // 优先用 member_id 查询，同时兼容未登录时填写手机号预订的记录
         LambdaQueryWrapper<TableReservation> wrapper = new LambdaQueryWrapper<>();
-        if (memberPhone != null && !memberPhone.isBlank() && memberName != null && !memberName.isBlank()) {
-            wrapper.and(w -> w.eq(TableReservation::getCustomerPhone, memberPhone)
-                    .or()
-                    .eq(TableReservation::getCustomerName, memberName));
-        } else if (memberPhone != null && !memberPhone.isBlank()) {
-            wrapper.eq(TableReservation::getCustomerPhone, memberPhone);
-        } else if (memberName != null && !memberName.isBlank()) {
-            wrapper.eq(TableReservation::getCustomerName, memberName);
-        } else {
-            return Result.success(PageResult.of(List.of(), 0, page, size));
-        }
+        wrapper.and(w -> {
+            w.eq(TableReservation::getMemberId, memberId);
+            if (memberPhone != null && !memberPhone.isBlank()) {
+                w.or().eq(TableReservation::getCustomerPhone, memberPhone);
+            }
+        });
         wrapper.orderByDesc(TableReservation::getCreatedAt);
         Page<TableReservation> result = reservationMapper.selectPage(new Page<>(page, size), wrapper);
 
@@ -192,6 +188,7 @@ public class MemberPortalController {
             // 查桌台号
             DiningTable table = diningTableMapper.selectById(r.getTableId());
             map.put("tableNumber", table != null ? table.getTableNumber() : "-");
+            map.put("capacity", table != null ? table.getCapacity() : null);
             // 状态文字
             String[] statusTexts = {"待确认", "已确认", "已到店", "已完成", "已取消"};
             int s = r.getStatus() != null ? r.getStatus() : 0;

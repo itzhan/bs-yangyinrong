@@ -1,0 +1,80 @@
+# ============================================
+# 🍲 火锅店管理系统 - Docker 一键部署
+# 使用方式: docker-compose up --build
+# ============================================
+
+name: hotpot
+
+services:
+  # ---- MySQL 数据库 ----
+  mysql:
+    image: mysql:8.0
+    container_name: hotpot-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ab123168
+      MYSQL_DATABASE: hotpot_db
+      MYSQL_CHARSET: utf8mb4
+      MYSQL_COLLATION: utf8mb4_general_ci
+      TZ: Asia/Shanghai
+    ports:
+      - "3307:3306"   # 映射到 3307 避免和本地 MySQL 冲突
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+      - ./sql/data.sql:/docker-entrypoint-initdb.d/02-data.sql:ro
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-pab123168"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      - hotpot-net
+
+  # ---- Spring Boot 后端 ----
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: hotpot-backend
+    restart: unless-stopped
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: hotpot_db
+      DB_USER: root
+      DB_PASS: ab123168
+      TZ: Asia/Shanghai
+    volumes:
+      - uploads_data:/app/uploads
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - hotpot-net
+
+  # ---- Nginx (用户端 + 管理端 + API 代理) ----
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
+    container_name: hotpot-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - hotpot-net
+
+volumes:
+  mysql_data:
+    driver: local
+  uploads_data:
+    driver: local
+
+networks:
+  hotpot-net:
+    driver: bridge
