@@ -26,7 +26,7 @@ RUN pnpm install --frozen-lockfile
 COPY admin/ ./
 
 # 设置生产环境 API 地址 (由 Nginx 代理)
-ENV VITE_API_URL=/api
+ENV VITE_API_URL=/
 ENV VITE_BASE_URL=/admin/
 
 RUN npx vite build
