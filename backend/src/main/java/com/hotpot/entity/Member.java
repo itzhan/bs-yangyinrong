@@ -12,6 +12,8 @@ public class Member {
     @TableId(type = IdType.AUTO)
     private Long id;
     private String memberNo;
+    private String username;
+    private String password;
     private String name;
     private String phone;
     private Integer gender;

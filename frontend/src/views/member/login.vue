@@ -12,7 +12,7 @@
           <el-input v-model="form.phone" placeholder="请输入手机号" maxlength="11" prefix-icon="Phone" />
         </el-form-item>
         <el-form-item label="密码" prop="password">
-          <el-input v-model="form.password" type="password" show-password placeholder="请输入密码（手机后6位）" prefix-icon="Lock" />
+          <el-input v-model="form.password" type="password" show-password placeholder="请输入密码" prefix-icon="Lock" />
         </el-form-item>
         <el-form-item>
           <el-button type="danger" size="large" round :loading="loading" style="width: 100%" @click="handleLogin">

@@ -12,7 +12,13 @@
           <el-input v-model="form.name" placeholder="请输入您的姓名" prefix-icon="User" />
         </el-form-item>
         <el-form-item label="手机号" prop="phone">
-          <el-input v-model="form.phone" placeholder="请输入手机号（将作为登录账号）" maxlength="11" prefix-icon="Phone" />
+          <el-input v-model="form.phone" placeholder="请输入手机号" maxlength="11" prefix-icon="Phone" />
+        </el-form-item>
+        <el-form-item label="密码" prop="password">
+          <el-input v-model="form.password" type="password" show-password placeholder="请设置密码（至少6位）" prefix-icon="Lock" />
+        </el-form-item>
+        <el-form-item label="确认密码" prop="confirmPassword">
+          <el-input v-model="form.confirmPassword" type="password" show-password placeholder="请再次输入密码" prefix-icon="Lock" />
         </el-form-item>
         <el-form-item label="性别" prop="gender">
           <el-radio-group v-model="form.gender">
@@ -45,13 +51,30 @@ const router = useRouter()
 const formRef = ref<FormInstance>()
 const loading = ref(false)
 
-const form = reactive({ name: '', phone: '', gender: 1 })
+const form = reactive({ name: '', phone: '', password: '', confirmPassword: '', gender: 1 })
+
+const validateConfirmPwd = (_rule: any, value: string, callback: any) => {
+  if (value !== form.password) {
+    callback(new Error('两次输入的密码不一致'))
+  } else {
+    callback()
+  }
+}
 
 const rules = {
   name: [{ required: true, message: '请输入姓名', trigger: 'blur' }],
   phone: [
     { required: true, message: '请输入手机号', trigger: 'blur' },
     { pattern: /^1[3-9]\d{9}$/, message: '手机号格式不正确', trigger: 'blur' }
+  ],
+
+  password: [
+    { required: true, message: '请输入密码', trigger: 'blur' },
+    { min: 6, message: '密码长度不能少于6位', trigger: 'blur' }
+  ],
+  confirmPassword: [
+    { required: true, message: '请再次输入密码', trigger: 'blur' },
+    { validator: validateConfirmPwd, trigger: 'blur' }
   ],
   gender: [{ required: true, message: '请选择性别', trigger: 'change' }]
 }
@@ -61,8 +84,9 @@ const handleRegister = async () => {
   if (!valid) return
   loading.value = true
   try {
-    await memberRegister(form)
-    ElMessage.success('注册成功！初始密码为手机号后6位，请登录')
+    const { confirmPassword, ...submitData } = form
+    await memberRegister(submitData)
+    ElMessage.success('注册成功，请登录')
     router.push('/member/login')
   } catch { /* handled by interceptor */ }
   loading.value = false

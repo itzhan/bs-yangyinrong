@@ -44,9 +44,9 @@ public class MemberPortalController {
         Member member = memberMapper.selectOne(
                 new LambdaQueryWrapper<Member>().eq(Member::getPhone, phone));
         if (member == null) throw new BusinessException("会员不存在");
-        // 简单密码验证：会员密码就是手机号后6位
-        String expectedPwd = phone.length() >= 6 ? phone.substring(phone.length() - 6) : phone;
-        if (!expectedPwd.equals(password)) throw new BusinessException("密码错误");
+        if (!passwordEncoder.matches(password, member.getPassword())) {
+            throw new BusinessException("密码错误");
+        }
 
         String token = jwtUtils.generateToken(member.getId(), member.getPhone(), "MEMBER");
         Map<String, Object> result = new HashMap<>();
@@ -62,13 +62,19 @@ public class MemberPortalController {
     public Result<Void> register(@RequestBody Map<String, String> body) {
         String name = body.get("name");
         String phone = body.get("phone");
-        Long count = memberMapper.selectCount(
+        String password = body.get("password");
+        String username = name; // 自动用姓名作为用户名
+        if (password == null || password.length() < 6) throw new BusinessException("密码长度不能少于6位");
+
+        Long phoneCount = memberMapper.selectCount(
                 new LambdaQueryWrapper<Member>().eq(Member::getPhone, phone));
-        if (count > 0) throw new BusinessException("手机号已注册");
+        if (phoneCount > 0) throw new BusinessException("手机号已注册");
 
         Member member = new Member();
         member.setName(name);
         member.setPhone(phone);
+        member.setUsername(username);
+        member.setPassword(passwordEncoder.encode(password));
         member.setMemberNo("M" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")));
         member.setLevelId(1L);
         member.setBalance(BigDecimal.ZERO);
